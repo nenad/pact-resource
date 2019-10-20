@@ -76,7 +76,3 @@ func populateRequest(req *CheckRequest) {
 		log.Fatalf("Could not decode request: %s", err)
 	}
 }
-
-func getHash(p broker.Pact) string {
-	return fmt.Sprintf("%s:%s", p.Consumer, p.ConsumerVersion)
-}

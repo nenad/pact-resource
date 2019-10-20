@@ -5,6 +5,7 @@ WORKDIR /resource
 
 ENV CGO_ENABLED 0
 RUN go build -o /assets/check ./check
+RUN go build -o /assets/in ./in
 
 RUN mkdir /tests && set -e; for pkg in $(go list ./...); do \
 		go test -o "/tests/$(basename $pkg).test" -c $pkg; \

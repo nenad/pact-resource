@@ -3,6 +3,7 @@ package broker
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"time"
 )
@@ -97,4 +98,25 @@ func (c *Client) GetDetails(provider, consumer, version string) (Pact, error) {
 		},
 		UpdatedAt: pact.CreatedAt,
 	}, nil
+}
+
+func (c *Client) GetDetailsRaw(provider, consumer, version string) ([]byte, error) {
+	url := fmt.Sprintf("%s/pacts/provider/%s/consumer/%s/version/%s", c.baseURL, provider, consumer, version)
+
+	resp, err := c.client.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode > 399 {
+		return nil, fmt.Errorf("error while requesting information: %d", resp.StatusCode)
+	}
+
+	bytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return bytes, nil
 }
