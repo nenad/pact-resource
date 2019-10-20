@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"time"
 
 	"github.com/nenad/pact-resource/broker"
@@ -64,6 +65,10 @@ func main() {
 			})
 		}
 	}
+
+	sort.SliceStable(consumerUpdates, func(i, j int) bool {
+		return consumerUpdates[i].UpdatedAt.Before(consumerUpdates[j].UpdatedAt)
+	})
 
 	if err := json.NewEncoder(os.Stdout).Encode(consumerUpdates); err != nil {
 		fmt.Printf("error while encoding response: %s", err)
