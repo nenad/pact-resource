@@ -1,4 +1,4 @@
-module pact-resource
+module github.com/nenad/pact-resource
 
 go 1.13
 

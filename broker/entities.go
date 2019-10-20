@@ -31,7 +31,6 @@ type (
 		CreatedAt time.Time `json:"createdAt"`
 	}
 
-
 	PactVersion struct {
 		Provider        string
 		Consumer        string
@@ -58,4 +57,3 @@ func (h *halPact) ToVersions() []PactVersion {
 
 	return pacts
 }
-

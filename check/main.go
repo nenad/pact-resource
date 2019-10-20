@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"pact-resource/broker"
 	"time"
+
+	"github.com/nenad/pact-resource/broker"
 )
 
 type (
@@ -18,7 +19,7 @@ type (
 
 	Source struct {
 		// TODO Add Broker auth support
-		BrokerURL string `json:"broker_url"`
+		BrokerURL string   `json:"broker_url"`
 		Provider  string   `json:"provider"`
 		Consumers []string `json:"consumers"`
 		Tag       *string  `json:"tag"`
