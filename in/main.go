@@ -32,9 +32,16 @@ type (
 		Version Version `json:"version"`
 	}
 
+	Metadata []MetadataField
+
+	MetadataField struct {
+		Name  string `json:"name"`
+		Value string `json:"value"`
+	}
+
 	InResponse struct {
-		Version  Version `json:"version"`
-		Metadata map[string]string
+		Version  Version  `json:"version"`
+		Metadata Metadata `json:"metadata"`
 	}
 )
 
@@ -80,8 +87,11 @@ func main() {
 
 	if err := json.NewEncoder(os.Stdout).Encode(InResponse{
 		Version: request.Version,
-		Metadata: map[string]string{
-			"pact": pactPath,
+		Metadata: Metadata{
+			MetadataField{
+				Name:  "pact",
+				Value: pactPath,
+			},
 		},
 	}); err != nil {
 		fmt.Printf("error while encoding response: %s", err)
