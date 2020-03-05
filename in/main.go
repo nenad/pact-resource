@@ -20,11 +20,12 @@ type (
 	}
 
 	Source struct {
-		// TODO Add Broker auth support
 		BrokerURL string   `json:"broker_url"`
 		Provider  string   `json:"provider"`
 		Consumers []string `json:"consumers"`
 		Tag       *string  `json:"tag"`
+		Username  *string  `json:"username"`
+		Password  *string  `json:"password"`
 	}
 
 	InRequest struct {
@@ -50,6 +51,10 @@ func main() {
 	populateRequest(&request)
 
 	client := broker.NewClient(request.Source.BrokerURL)
+
+	if request.Source.Username != nil && request.Source.Password != nil {
+		broker.WithBasicAuth(*request.Source.Username, *request.Source.Password)(client)
+	}
 
 	if len(os.Args) != 2 {
 		fmt.Fprintf(os.Stderr, "first argument must be a directory")

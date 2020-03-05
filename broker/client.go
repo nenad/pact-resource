@@ -1,6 +1,7 @@
 package broker
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -46,13 +47,24 @@ func NewClient(brokerURL string, opts ...Option) *Client {
 	return &broker
 }
 
+func (c *Client) Get(url string) (resp *http.Response, err error) {
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+
+	if len(c.username) > 0 && len(c.password) > 0 {
+		auth := base64.StdEncoding.EncodeToString([]byte(c.username + ":" + c.password))
+		req.Header.Add("Authorization", "Basic " + auth)
+	}
+
+	return c.client.Do(req)
+}
+
 func (c *Client) GetVersions(provider, consumer, tag string) ([]PactVersion, error) {
 	url := fmt.Sprintf("%s/pacts/provider/%s/consumer/%s", c.baseURL, provider, consumer)
 	if tag != "" {
 		url = fmt.Sprintf("%s/tag/%s", url, tag)
 	}
 
-	resp, err := c.client.Get(url)
+	resp, err := c.Get(url)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +86,7 @@ func (c *Client) GetVersions(provider, consumer, tag string) ([]PactVersion, err
 func (c *Client) GetDetails(provider, consumer, version string) (Pact, error) {
 	url := fmt.Sprintf("%s/pacts/provider/%s/consumer/%s/version/%s", c.baseURL, provider, consumer, version)
 
-	resp, err := c.client.Get(url)
+	resp, err := c.Get(url)
 	if err != nil {
 		return Pact{}, err
 	}
@@ -103,7 +115,7 @@ func (c *Client) GetDetails(provider, consumer, version string) (Pact, error) {
 func (c *Client) GetDetailsRaw(provider, consumer, version string) ([]byte, error) {
 	url := fmt.Sprintf("%s/pacts/provider/%s/consumer/%s/version/%s", c.baseURL, provider, consumer, version)
 
-	resp, err := c.client.Get(url)
+	resp, err := c.Get(url)
 	if err != nil {
 		return nil, err
 	}
