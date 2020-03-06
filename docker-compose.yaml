@@ -1,0 +1,27 @@
+version: '3'
+services:
+  broker:
+    image: pactfoundation/pact-broker:latest
+    environment:
+      PACT_BROKER_LOG_LEVEL: DEBUG
+      PACT_BROKER_PORT: 9292
+      PACT_BROKER_DATABASE_ADAPTER: sqlite
+      PACT_BROKER_WEBHOOK_SCHEME_WHITELIST: "http https"
+      PACT_BROKER_WEBHOOK_HOST_WHITELIST: "/.*/"
+      #PACT_BROKER_BASIC_AUTH_USERNAME: admin
+      #PACT_BROKER_BASIC_AUTH_PASSWORD: admin
+    expose:
+      - 9292
+    ports:
+      - 19292:9292
+
+  resource:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    links:
+      - broker
+    depends_on:
+      - broker
+    volumes:
+    - .:/resource
