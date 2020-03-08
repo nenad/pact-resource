@@ -7,47 +7,13 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/nenad/pact-resource/broker"
-)
-
-type (
-	Version struct {
-		Consumer  string    `json:"consumer"`
-		UpdatedAt time.Time `json:"updated_at"`
-		Version   string    `json:"version"`
-	}
-
-	Source struct {
-		BrokerURL string   `json:"broker_url"`
-		Provider  string   `json:"provider"`
-		Consumers []string `json:"consumers"`
-		Tag       *string  `json:"tag"`
-		Username  *string  `json:"username"`
-		Password  *string  `json:"password"`
-	}
-
-	InRequest struct {
-		Source  Source  `json:"source"`
-		Version Version `json:"version"`
-	}
-
-	Metadata []MetadataField
-
-	MetadataField struct {
-		Name  string `json:"name"`
-		Value string `json:"value"`
-	}
-
-	InResponse struct {
-		Version  Version  `json:"version"`
-		Metadata Metadata `json:"metadata"`
-	}
+	"github.com/nenad/pact-resource/pkg/concourse"
 )
 
 func main() {
-	var request InRequest
+	var request concourse.InRequest
 	populateRequest(&request)
 
 	client := broker.NewClient(request.Source.BrokerURL)
@@ -90,21 +56,19 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := json.NewEncoder(os.Stdout).Encode(InResponse{
+	err = json.NewEncoder(os.Stdout).Encode(concourse.InResponse{
 		Version: request.Version,
-		Metadata: Metadata{
-			MetadataField{
-				Name:  "pact",
-				Value: pactPath,
-			},
+		Metadata: concourse.Metadata{
+			{Name: "pact", Value: pactPath},
 		},
-	}); err != nil {
+	})
+	if err != nil {
 		fmt.Printf("error while encoding response: %s", err)
 		os.Exit(1)
 	}
 }
 
-func populateRequest(req *InRequest) {
+func populateRequest(req *concourse.InRequest) {
 	if err := json.NewDecoder(os.Stdin).Decode(req); err != nil {
 		log.Fatalf("Could not decode request: %s", err)
 	}
