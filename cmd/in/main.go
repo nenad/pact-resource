@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/nenad/pact-resource/broker"
+	"github.com/nenad/pact-resource/pkg/broker"
 	"github.com/nenad/pact-resource/pkg/concourse"
 )
 
