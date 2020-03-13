@@ -1,0 +1,50 @@
+{
+    "_embedded": {
+        "pacts": [
+            {
+                "createdAt": "2020-02-27T19:03:04+00:00",
+                "_embedded": {
+                    "consumerVersion": {
+                        "number": "e15da45d3943bf10793a6d04cfb9f5dabe430fe2",
+                        "_links": {
+                            "self": {
+                                "title": "Version",
+                                "name": "e15da45d3943bf10793a6d04cfb9f5dabe430fe2",
+                                "href": "http://localhost:19292/pacticipants/Example%20App/versions/e15da45d3943bf10793a6d04cfb9f5dabe430fe2"
+                            }
+                        }
+                    }
+                },
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:19292/pacts/provider/Example%20API/consumer/Example%20App/version/e15da45d3943bf10793a6d04cfb9f5dabe430fe2",
+                        "title": "Pact between CONSUMER (e15da45d3943bf10793a6d04cfb9f5dabe430fe2) and PROVIDER"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:19292/pacts/provider/Example%20API/consumer/Example%20App/tag/prod",
+            "title": "All versions of the pact between CONSUMER and PROVIDER with tag prod"
+        },
+        "pb:consumer": {
+            "href": "http://localhost:19292/pacticipants/Example%20App",
+            "title": "Consumer",
+            "name": "CONSUMER"
+        },
+        "pb:provider": {
+            "href": "http://localhost:19292/pacticipants/Example%20API",
+            "title": "Provider",
+            "name": "PROVIDER"
+        },
+        "pb:pact-versions": [
+            {
+                "href": "http://localhost:19292/pacts/provider/Example%20API/consumer/Example%20App/version/e15da45d3943bf10793a6d04cfb9f5dabe430fe2",
+                "title": "Pact version",
+                "name": "Version e15da45d3943bf10793a6d04cfb9f5dabe430fe2 - 27/02/2020"
+            }
+        ]
+    }
+}

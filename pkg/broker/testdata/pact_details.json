@@ -1,0 +1,169 @@
+{
+    "consumer": {
+        "name": "CONSUMER"
+    },
+    "provider": {
+        "name": "PROVIDER"
+    },
+    "interactions": [
+        {
+            "_id": "ef69ceef4d7fb82af014da950a3d9028a905c4de",
+            "description": "a request for an alligator",
+            "providerState": "there is an alligator named Mary",
+            "request": {
+                "method": "get",
+                "path": "/alligators/Mary",
+                "headers": {
+                    "Accept": "application/json"
+                }
+            },
+            "response": {
+                "status": 200,
+                "headers": {
+                    "Content-Type": "application/json;charset=utf-8"
+                },
+                "body": {
+                    "name": "Mary"
+                },
+                "matchingRules": {
+                    "$.body.name": {
+                        "match": "type"
+                    }
+                }
+            }
+        },
+        {
+            "_id": "4b3c23c364f420e1d1296d56a47695de0428d0af",
+            "description": "a request for an alligator",
+            "providerState": "there is not an alligator named Mary",
+            "request": {
+                "method": "get",
+                "path": "/alligators/Mary",
+                "headers": {
+                    "Accept": "application/json"
+                }
+            },
+            "response": {
+                "status": 404,
+                "headers": {}
+            }
+        },
+        {
+            "_id": "e57e7ac251a8bd078fcb81cad1e577cbafebcef5",
+            "description": "a request for an alligator",
+            "providerState": "an error occurs retrieving an alligator",
+            "request": {
+                "method": "get",
+                "path": "/alligators/Mary",
+                "headers": {
+                    "Accept": "application/json"
+                }
+            },
+            "response": {
+                "status": 500,
+                "headers": {
+                    "Content-Type": "application/json;charset=utf-8"
+                },
+                "body": {
+                    "error": "Argh!!!"
+                }
+            }
+        }
+    ],
+    "metadata": {
+        "pactSpecification": {
+            "version": "2.0.0"
+        }
+    },
+    "createdAt": "2020-03-12T07:03:04+00:00",
+    "_links": {
+        "self": {
+            "title": "Pact",
+            "name": "Pact between CONSUMER (5556b8149bf8bac76bc30f50a8a2dd4c22c85f30) and PROVIDER",
+            "href": "http://localhost:19292/pacts/provider/PROVIDER/consumer/CONSUMER/version/5556b8149bf8bac76bc30f50a8a2dd4c22c85f30"
+        },
+        "pb:consumer": {
+            "title": "Consumer",
+            "name": "CONSUMER",
+            "href": "http://localhost:19292/pacticipants/CONSUMER"
+        },
+        "pb:consumer-version": {
+            "title": "Consumer version",
+            "name": "5556b8149bf8bac76bc30f50a8a2dd4c22c85f30",
+            "href": "http://localhost:19292/pacticipants/CONSUMER/versions/5556b8149bf8bac76bc30f50a8a2dd4c22c85f30"
+        },
+        "pb:provider": {
+            "title": "Provider",
+            "name": "PROVIDER",
+            "href": "http://localhost:19292/pacticipants/PROVIDER"
+        },
+        "pb:latest-pact-version": {
+            "title": "Latest version of this pact",
+            "href": "http://localhost:19292/pacts/provider/PROVIDER/consumer/CONSUMER/latest"
+        },
+        "pb:all-pact-versions": {
+            "title": "All versions of this pact",
+            "href": "http://localhost:19292/pacts/provider/PROVIDER/consumer/CONSUMER/versions"
+        },
+        "pb:latest-untagged-pact-version": {
+            "title": "Latest untagged version of this pact",
+            "href": "http://localhost:19292/pacts/provider/PROVIDER/consumer/CONSUMER/latest-untagged"
+        },
+        "pb:latest-tagged-pact-version": {
+            "title": "Latest tagged version of this pact",
+            "href": "http://localhost:19292/pacts/provider/PROVIDER/consumer/CONSUMER/latest/{tag}",
+            "templated": true
+        },
+        "pb:previous-distinct": {
+            "title": "Previous distinct version of this pact",
+            "href": "http://localhost:19292/pacts/provider/PROVIDER/consumer/CONSUMER/version/5556b8149bf8bac76bc30f50a8a2dd4c22c85f30/previous-distinct"
+        },
+        "pb:diff-previous-distinct": {
+            "title": "Diff with previous distinct version of this pact",
+            "href": "http://localhost:19292/pacts/provider/PROVIDER/consumer/CONSUMER/version/5556b8149bf8bac76bc30f50a8a2dd4c22c85f30/diff/previous-distinct"
+        },
+        "pb:diff": {
+            "title": "Diff with another specified version of this pact",
+            "href": "http://localhost:19292/pacts/provider/PROVIDER/consumer/CONSUMER/pact-version/cc79bbc141aa53a4fd45d155d705cbb243dec4b6/diff/pact-version/{pactVersion}",
+            "templated": true
+        },
+        "pb:pact-webhooks": {
+            "title": "Webhooks for the pact between CONSUMER and PROVIDER",
+            "href": "http://localhost:19292/webhooks/provider/PROVIDER/consumer/CONSUMER"
+        },
+        "pb:consumer-webhooks": {
+            "title": "Webhooks for all pacts with provider PROVIDER",
+            "href": "http://localhost:19292/webhooks/consumer/PROVIDER"
+        },
+        "pb:tag-prod-version": {
+            "title": "PUT to this resource to tag this consumer version as 'production'",
+            "href": "http://localhost:19292/pacticipants/CONSUMER/versions/5556b8149bf8bac76bc30f50a8a2dd4c22c85f30/tags/prod"
+        },
+        "pb:tag-version": {
+            "title": "PUT to this resource to tag this consumer version",
+            "href": "http://localhost:19292/pacticipants/CONSUMER/versions/5556b8149bf8bac76bc30f50a8a2dd4c22c85f30/tags/{tag}"
+        },
+        "pb:publish-verification-results": {
+            "title": "Publish verification results",
+            "href": "http://localhost:19292/pacts/provider/PROVIDER/consumer/CONSUMER/pact-version/cc79bbc141aa53a4fd45d155d705cbb243dec4b6/metadata/Y29uc3VtZXJfdmVyc2lvbl9udW1iZXI9NTU1NmI4MTQ5YmY4YmFjNzZiYzMwZjUwYThhMmRkNGMyMmM4NWYzMA==/verification-results"
+        },
+        "pb:latest-verification-results": {
+            "href": "http://localhost:19292/pacts/provider/PROVIDER/consumer/CONSUMER/pact-version/cc79bbc141aa53a4fd45d155d705cbb243dec4b6/verification-results/latest"
+        },
+        "pb:triggered-webhooks": {
+            "title": "Webhooks triggered by the publication of this pact",
+            "href": "http://localhost:19292/pacts/provider/PROVIDER/consumer/CONSUMER/version/5556b8149bf8bac76bc30f50a8a2dd4c22c85f30/triggered-webhooks"
+        },
+        "pb:matrix-for-consumer-version": {
+            "title": "View matrix rows for the consumer version to which this pact belongs",
+            "href": "http://localhost:19292/matrix?q[][pacticipant]=CONSUMER&q[][version]=5556b8149bf8bac76bc30f50a8a2dd4c22c85f30&latestby=cvpv"
+        },
+        "curies": [
+            {
+                "name": "pb",
+                "href": "http://localhost:19292/doc/{rel}?context=pact",
+                "templated": true
+            }
+        ]
+    }
+}
