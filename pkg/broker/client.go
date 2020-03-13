@@ -47,7 +47,7 @@ func NewClient(brokerURL string, opts ...Option) *Client {
 	return &broker
 }
 
-func (c *Client) Get(url string) (resp *http.Response, err error) {
+func (c *Client) get(url string) (resp *http.Response, err error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 
 	if len(c.username) > 0 && len(c.password) > 0 {
@@ -58,13 +58,32 @@ func (c *Client) Get(url string) (resp *http.Response, err error) {
 	return c.client.Do(req)
 }
 
-func (c *Client) GetVersions(provider, consumer, tag string) ([]PactVersion, error) {
-	url := fmt.Sprintf("%s/pacts/provider/%s/consumer/%s", c.baseURL, provider, consumer)
-	if tag != "" {
-		url = fmt.Sprintf("%s/tag/%s", url, tag)
+func (c *Client) GetVersions(provider, consumer string) ([]PactVersion, error) {
+	url := fmt.Sprintf("%s/pacts/provider/%s/consumer/%s/versions", c.baseURL, provider, consumer)
+
+	resp, err := c.get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode > 399 {
+		return nil, fmt.Errorf("error while requesting information: %d", resp.StatusCode)
 	}
 
-	resp, err := c.Get(url)
+	var halPacts halPact
+	err = json.NewDecoder(resp.Body).Decode(&halPacts)
+	if err != nil {
+		return nil, err
+	}
+
+	return halPacts.ToVersions(), nil
+}
+
+func (c *Client) GetTaggedVersions(provider, consumer, tag string) ([]PactVersion, error) {
+	url := fmt.Sprintf("%s/pacts/provider/%s/consumer/%s/tag/%s", c.baseURL, provider, consumer, tag)
+
+	resp, err := c.get(url)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +105,7 @@ func (c *Client) GetVersions(provider, consumer, tag string) ([]PactVersion, err
 func (c *Client) GetDetails(provider, consumer, version string) (Pact, error) {
 	url := fmt.Sprintf("%s/pacts/provider/%s/consumer/%s/version/%s", c.baseURL, provider, consumer, version)
 
-	resp, err := c.Get(url)
+	resp, err := c.get(url)
 	if err != nil {
 		return Pact{}, err
 	}
@@ -115,7 +134,7 @@ func (c *Client) GetDetails(provider, consumer, version string) (Pact, error) {
 func (c *Client) GetDetailsRaw(provider, consumer, version string) ([]byte, error) {
 	url := fmt.Sprintf("%s/pacts/provider/%s/consumer/%s/version/%s", c.baseURL, provider, consumer, version)
 
-	resp, err := c.Get(url)
+	resp, err := c.get(url)
 	if err != nil {
 		return nil, err
 	}

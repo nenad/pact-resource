@@ -6,35 +6,13 @@ import (
 	"log"
 	"os"
 	"sort"
-	"time"
 
-	"github.com/nenad/pact-resource/broker"
-)
-
-type (
-	Version struct {
-		Consumer  string    `json:"consumer"`
-		UpdatedAt time.Time `json:"updated_at"`
-		Version   string    `json:"version"`
-	}
-
-	Source struct {
-		BrokerURL string   `json:"broker_url"`
-		Provider  string   `json:"provider"`
-		Consumers []string `json:"consumers"`
-		Tag       *string  `json:"tag"`
-		Username  *string  `json:"username"`
-		Password  *string  `json:"password"`
-	}
-
-	CheckRequest struct {
-		Source  Source  `json:"source"`
-		Version Version `json:"version"`
-	}
+	"github.com/nenad/pact-resource/pkg/broker"
+	"github.com/nenad/pact-resource/pkg/concourse"
 )
 
 func main() {
-	var request CheckRequest
+	var request concourse.CheckRequest
 	populateRequest(&request)
 
 	client := broker.NewClient(request.Source.BrokerURL)
@@ -43,14 +21,15 @@ func main() {
 		broker.WithBasicAuth(*request.Source.Username, *request.Source.Password)(client)
 	}
 
-	if request.Source.Tag == nil {
-		empty := ""
-		request.Source.Tag = &empty
-	}
-
-	var consumerUpdates []Version
+	var consumerUpdates []concourse.Version
 	for _, c := range request.Source.Consumers {
-		versions, err := client.GetVersions(request.Source.Provider, c, *request.Source.Tag)
+		var versions []broker.PactVersion
+		var err error
+		if request.Source.Tag == nil || *request.Source.Tag == "" {
+			versions, err = client.GetVersions(request.Source.Provider, c)
+		} else {
+			versions, err = client.GetTaggedVersions(request.Source.Provider, c, *request.Source.Tag)
+		}
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "could not get pacts: %s", err)
 			os.Exit(1)
@@ -63,7 +42,7 @@ func main() {
 				os.Exit(1)
 			}
 
-			consumerUpdates = append(consumerUpdates, Version{
+			consumerUpdates = append(consumerUpdates, concourse.Version{
 				Consumer:  c,
 				UpdatedAt: pact.UpdatedAt,
 				Version:   pact.PactVersion.ConsumerVersion,
@@ -81,7 +60,7 @@ func main() {
 	}
 }
 
-func populateRequest(req *CheckRequest) {
+func populateRequest(req *concourse.CheckRequest) {
 	if err := json.NewDecoder(os.Stdin).Decode(req); err != nil {
 		log.Fatalf("Could not decode request: %s", err)
 	}

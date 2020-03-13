@@ -10,12 +10,18 @@ type (
 			Pacts []pact `json:"pacts"`
 		} `json:"_embedded"`
 		Links struct {
-			ConsumerMeta struct {
+			ConsumerOldMeta struct {
 				Name string `json:"name"`
 			} `json:"pb:consumer"`
-			ProviderMeta struct {
+			ProviderOldMeta struct {
 				Name string `json:"name"`
 			} `json:"pb:provider"`
+			ConsumerMeta struct {
+				Name string `json:"name"`
+			} `json:"consumer"`
+			ProviderMeta struct {
+				Name string `json:"name"`
+			} `json:"provider"`
 		} `json:"_links"`
 	}
 
@@ -46,7 +52,13 @@ type (
 func (h *halPact) ToVersions() []PactVersion {
 	var pacts []PactVersion
 	consumer := h.Links.ConsumerMeta.Name
+	if consumer == "" {
+		consumer = h.Links.ConsumerOldMeta.Name
+	}
 	provider := h.Links.ProviderMeta.Name
+	if provider == "" {
+		provider = h.Links.ProviderOldMeta.Name
+	}
 	for _, v := range h.Embedded.Pacts {
 		var p PactVersion
 		p.ConsumerVersion = v.Embedded.ConsumerVersion.Number
