@@ -21,16 +21,16 @@ func TestIntegration_CheckReturnsOutputSuccessfully(t *testing.T) {
 	tb := test.NewTestBroker(url)
 
 	if err := tb.Reset(); err != nil {
-		t.Fatalf("could not reset the broker")
+		t.Fatalf("could not reset the broker: %s", err)
 	}
 	if err := tb.CreatePact("PROVIDER", "CONSUMER", "VERSION"); err != nil {
-		t.Fatalf("could not create a pact")
+		t.Fatalf("could not create a pact: %s", err)
 	}
 
 	cmd := exec.Command("../../bin/check")
 	input, err := cmd.StdinPipe()
 	if err != nil {
-		t.Fatalf("could not get input pipe")
+		t.Fatalf("could not get input pipe: %s", err)
 	}
 	output := &bytes.Buffer{}
 	errors := &bytes.Buffer{}

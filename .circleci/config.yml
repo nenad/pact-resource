@@ -3,8 +3,7 @@ jobs:
   run-tests:
     docker:
       - image: golang:latest
-        environment:
-          TEST_PACT_BROKER_URL: http://broker:9292
+        name: resource
       - image: pactfoundation/pact-broker:latest
         name: broker
         environment:
@@ -13,6 +12,9 @@ jobs:
           PACT_BROKER_DATABASE_ADAPTER: sqlite
           PACT_BROKER_WEBHOOK_SCHEME_WHITELIST: "http https"
           PACT_BROKER_WEBHOOK_HOST_WHITELIST: "/.*/"
+
+    environment:
+      TEST_PACT_BROKER_URL: http://broker:9292
 
     working_directory: /resource
     steps:
