@@ -1,0 +1,18 @@
+version: 2
+jobs:
+  run-unit-tests:
+    docker:
+      - image: golang:latest
+
+    working_directory: /pact-resource
+    steps:
+      - checkout
+      - run:
+          name: Run unit tests
+          command: make test-short
+
+workflows:
+  version: 2
+  test-workflow:
+    jobs:
+      - run-unit-tests
