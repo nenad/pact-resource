@@ -21,6 +21,9 @@ jobs:
           name: Run unit tests
           command: make test-short
       - run:
+          name: Build binaries
+          command: make build
+      - run:
           name: Run integration tests
           command: make test-integration
 
