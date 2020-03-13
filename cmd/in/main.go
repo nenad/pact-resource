@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -23,21 +22,14 @@ func main() {
 	}
 
 	if len(os.Args) != 2 {
-		fmt.Fprintf(os.Stderr, "first argument must be a directory")
-		os.Exit(1)
+		concourse.FailTask("first argument must be a directory")
 	}
 
 	dir := os.Args[1]
 
-	if request.Source.Tag == nil {
-		empty := ""
-		request.Source.Tag = &empty
-	}
-
 	bytes, err := client.GetDetailsRaw(request.Source.Provider, request.Version.Consumer, request.Version.Version)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "could not read bytes: %s", err)
-		os.Exit(1)
+		concourse.FailTask("could not read bytes: %s", err)
 	}
 
 	pactPath := fmt.Sprintf("%s-%s-%s.json", request.Source.Provider, request.Version.Consumer, request.Version.Version)
@@ -45,31 +37,23 @@ func main() {
 
 	file, err := os.Create(filepath.Join(dir, pactPath))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "could not open file: %s", err)
-		os.Exit(1)
+		concourse.FailTask("could not open file: %s", err)
 	}
 
 	_, err = file.Write(bytes)
 	defer file.Close()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "could not write to file: %s", err)
-		os.Exit(1)
+		concourse.FailTask("could not write to file: %s", err)
 	}
 
-	err = json.NewEncoder(os.Stdout).Encode(concourse.InResponse{
-		Version: request.Version,
-		Metadata: concourse.Metadata{
-			{Name: "pact", Value: pactPath},
-		},
-	})
-	if err != nil {
-		fmt.Printf("error while encoding response: %s", err)
-		os.Exit(1)
+	resp := concourse.InResponse{Version: request.Version, Metadata: concourse.Metadata{{Name: "pact", Value: pactPath}}}
+	if err := json.NewEncoder(os.Stdout).Encode(resp); err != nil {
+		concourse.FailTask("could not encode response: %s", err)
 	}
 }
 
 func populateRequest(req *concourse.InRequest) {
 	if err := json.NewDecoder(os.Stdin).Decode(req); err != nil {
-		log.Fatalf("Could not decode request: %s", err)
+		concourse.FailTask("could not decode request: %s", err)
 	}
 }

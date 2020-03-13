@@ -2,8 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 	"os"
 	"sort"
 
@@ -31,15 +29,13 @@ func main() {
 			versions, err = client.GetTaggedVersions(request.Source.Provider, c, *request.Source.Tag)
 		}
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "could not get pacts: %s", err)
-			os.Exit(1)
+			concourse.FailTask("could not get pacts: %s", err)
 		}
 		for _, p := range versions {
 			// TODO Add verification check as a filter
 			pact, err := client.GetDetails(p.Provider, p.Consumer, p.ConsumerVersion)
 			if err != nil {
-				fmt.Printf("could not get details: %s", err)
-				os.Exit(1)
+				concourse.FailTask("could not get details: %s", err)
 			}
 
 			consumerUpdates = append(consumerUpdates, concourse.Version{
@@ -55,13 +51,12 @@ func main() {
 	})
 
 	if err := json.NewEncoder(os.Stdout).Encode(consumerUpdates); err != nil {
-		fmt.Printf("error while encoding response: %s", err)
-		os.Exit(1)
+		concourse.FailTask("error while encoding response: %s", err)
 	}
 }
 
 func populateRequest(req *concourse.CheckRequest) {
 	if err := json.NewDecoder(os.Stdin).Decode(req); err != nil {
-		log.Fatalf("Could not decode request: %s", err)
+		concourse.FailTask("could not decode request: %s", err)
 	}
 }
