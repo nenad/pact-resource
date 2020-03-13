@@ -1,4 +1,4 @@
-package broker_test
+package test
 
 import (
 	"bytes"
@@ -10,24 +10,24 @@ import (
 	"time"
 )
 
-func newTestBroker(url string) testBroker {
+func NewTestBroker(url string) Broker {
 	if url == "" {
 		panic("Test broker URL not set")
 	}
 
-	return testBroker{
-		url:    url,
+	return Broker{
+		URL:    url,
 		client: &http.Client{Timeout: time.Second},
 	}
 }
 
-type testBroker struct {
-	url    string
+type Broker struct {
+	URL    string
 	client *http.Client
 }
 
-func (b *testBroker) reset() error {
-	pacticipants, err := b.getAllPacticipants()
+func (b *Broker) Reset() error {
+	pacticipants, err := b.GetPacticipants()
 	if err != nil {
 		return err
 	}
@@ -46,7 +46,7 @@ func (b *testBroker) reset() error {
 }
 
 // Returns a list of all pacticipants
-func (b *testBroker) getAllPacticipants() (pacticipants []string, err error) {
+func (b *Broker) GetPacticipants() (pacticipants []string, err error) {
 	resp, err := b.do("GET", "/pacticipants", nil)
 	if err != nil {
 		return nil, fmt.Errorf("could not get pacticipants: %w", err)
@@ -77,7 +77,7 @@ func (b *testBroker) getAllPacticipants() (pacticipants []string, err error) {
 }
 
 // Creates a dummy pact between a consumer and provider
-func (b *testBroker) createPact(provider, consumer, version string) error {
+func (b *Broker) CreatePact(provider, consumer, version string) error {
 	resp, err := b.do(
 		"PUT",
 		fmt.Sprintf("/pacts/provider/%s/consumer/%s/version/%s", provider, consumer, version),
@@ -93,8 +93,8 @@ func (b *testBroker) createPact(provider, consumer, version string) error {
 	return nil
 }
 
-func (b *testBroker) do(method string, path string, body io.Reader) (*http.Response, error) {
-	r, err := http.NewRequest(method, fmt.Sprintf("%s%s", b.url, path), body)
+func (b *Broker) do(method string, path string, body io.Reader) (*http.Response, error) {
+	r, err := http.NewRequest(method, fmt.Sprintf("%s%s", b.URL, path), body)
 	if err != nil {
 		return nil, err
 	}
