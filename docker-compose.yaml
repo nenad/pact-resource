@@ -8,8 +8,6 @@ services:
       PACT_BROKER_DATABASE_ADAPTER: sqlite
       PACT_BROKER_WEBHOOK_SCHEME_WHITELIST: "http https"
       PACT_BROKER_WEBHOOK_HOST_WHITELIST: "/.*/"
-      #PACT_BROKER_BASIC_AUTH_USERNAME: admin
-      #PACT_BROKER_BASIC_AUTH_PASSWORD: admin
     expose:
       - 9292
     ports:
@@ -19,10 +17,11 @@ services:
     build:
       context: .
       dockerfile: dev.Dockerfile
+    environment:
+      TEST_PACT_BROKER_URL: http://broker:9292
     links:
       - broker
     depends_on:
       - broker
     volumes:
     - .:/resource
-
