@@ -1,18 +1,31 @@
 version: 2
 jobs:
-  run-unit-tests:
+  run-tests:
     docker:
       - image: golang:latest
+        environment:
+          TEST_PACT_BROKER_URL: http://broker:9292
+      - image: pactfoundation/pact-broker:latest
+        name: broker
+        environment:
+          PACT_BROKER_LOG_LEVEL: DEBUG
+          PACT_BROKER_PORT: 9292
+          PACT_BROKER_DATABASE_ADAPTER: sqlite
+          PACT_BROKER_WEBHOOK_SCHEME_WHITELIST: "http https"
+          PACT_BROKER_WEBHOOK_HOST_WHITELIST: "/.*/"
 
-    working_directory: /pact-resource
+    working_directory: /resource
     steps:
       - checkout
       - run:
           name: Run unit tests
           command: make test-short
+      - run:
+          name: Run integration tests
+          command: make test-integration
 
 workflows:
   version: 2
   test-workflow:
     jobs:
-      - run-unit-tests
+      - run-tests
