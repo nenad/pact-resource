@@ -21,14 +21,15 @@ func main() {
 		broker.WithBasicAuth(*request.Source.Username, *request.Source.Password)(client)
 	}
 
-	if request.Source.Tag == nil {
-		empty := ""
-		request.Source.Tag = &empty
-	}
-
 	var consumerUpdates []concourse.Version
 	for _, c := range request.Source.Consumers {
-		versions, err := client.GetVersions(request.Source.Provider, c, *request.Source.Tag)
+		var versions []broker.PactVersion
+		var err error
+		if request.Source.Tag == nil || *request.Source.Tag == "" {
+			versions, err = client.GetVersions(request.Source.Provider, c)
+		} else {
+			versions, err = client.GetTaggedVersions(request.Source.Provider, c, *request.Source.Tag)
+		}
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "could not get pacts: %s", err)
 			os.Exit(1)
