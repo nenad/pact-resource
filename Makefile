@@ -1,3 +1,11 @@
+DOCKER_COMPOSE_EXISTS := $(shell command -v docker-compose 2>/dev/null)
+
+ifdef DOCKER_COMPOSE_EXISTS
+	GOTEST = docker-compose exec resource go test
+else
+	GOTEST = go test
+endif
+
 build:
 	go build -o bin/check ./cmd/check
 	go build -o bin/in ./cmd/in
@@ -5,7 +13,7 @@ build:
 test: test-short test-integration
 
 test-integration:
-	go test -run Integration $$(go list ./...)
+	$(GOTEST) -run Integration $$(go list ./...)
 
 test-short:
-	go test -short $$(go list ./...)
+	$(GOTEST) -short $$(go list ./...)
