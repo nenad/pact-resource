@@ -7,8 +7,11 @@ import (
 	"io"
 	"math/rand"
 	"net/http"
+	"sync"
 	"time"
 )
+
+var mu sync.Mutex
 
 func NewTestBroker(url string) Broker {
 	if url == "" {
@@ -37,7 +40,7 @@ func (b *Broker) Reset() error {
 		if err != nil {
 			return fmt.Errorf("could not delete pacticipant: %w", err)
 		}
-		if resp.StatusCode != 204 && resp.StatusCode != 404 {
+		if resp.StatusCode != 204 {
 			return fmt.Errorf("could not delete pacticipant, got status code of %d", resp.StatusCode)
 		}
 	}
@@ -94,6 +97,8 @@ func (b *Broker) CreatePact(provider, consumer, version string) error {
 }
 
 func (b *Broker) do(method string, path string, body io.Reader) (*http.Response, error) {
+	mu.Lock()
+	defer mu.Unlock()
 	r, err := http.NewRequest(method, fmt.Sprintf("%s%s", b.URL, path), body)
 	if err != nil {
 		return nil, err
