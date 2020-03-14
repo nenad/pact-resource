@@ -37,7 +37,7 @@ func (b *Broker) Reset() error {
 		if err != nil {
 			return fmt.Errorf("could not delete pacticipant: %w", err)
 		}
-		if resp.StatusCode != 204 {
+		if resp.StatusCode != 204 && resp.StatusCode != 404 {
 			return fmt.Errorf("could not delete pacticipant, got status code of %d", resp.StatusCode)
 		}
 	}
