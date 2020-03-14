@@ -8,11 +8,8 @@ import (
 	"math/rand"
 	"net/http"
 	"strings"
-	"sync"
 	"time"
 )
-
-var mu sync.Mutex
 
 func NewTestBroker(url string) Broker {
 	if url == "" {
@@ -38,13 +35,15 @@ func (b *Broker) Reset() error {
 
 	for _, p := range pacticipants {
 		p = strings.Replace(p, " ", "%20", -1)
+		fmt.Println("Deleting " + p)
 		resp, err := b.do("DELETE", fmt.Sprintf("/pacticipants/%s", p), nil)
 		if err != nil {
-			return fmt.Errorf("could not delete pacticipant: %w", err)
+			return fmt.Errorf("could not delete pacticipant %s: %w", p, err)
 		}
 		if resp.StatusCode != 204 {
-			return fmt.Errorf("could not delete pacticipant, got status code of %d", resp.StatusCode)
+			return fmt.Errorf("could not delete pacticipant %s, got status code of %d", p, resp.StatusCode)
 		}
+		fmt.Println("Deleted " + p)
 	}
 
 	return nil
@@ -78,6 +77,7 @@ func (b *Broker) GetPacticipants() (pacticipants []string, err error) {
 		pacticipants = append(pacticipants, p.Name)
 	}
 
+	fmt.Printf("Pacticipants: %+v\n", pacticipants)
 	return pacticipants, nil
 }
 
@@ -95,6 +95,8 @@ func (b *Broker) CreatePact(provider, consumer, version string) error {
 	if resp.StatusCode != 201 {
 		return fmt.Errorf("failed to create a pact, got error code %d", resp.StatusCode)
 	}
+	fmt.Println("Created provider " + provider)
+	fmt.Println("Created consumer " + consumer)
 	return nil
 }
 
