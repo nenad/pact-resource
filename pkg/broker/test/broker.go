@@ -7,7 +7,7 @@ import (
 	"io"
 	"math/rand"
 	"net/http"
-	"net/url"
+	"strings"
 	"sync"
 	"time"
 )
@@ -37,7 +37,7 @@ func (b *Broker) Reset() error {
 	}
 
 	for _, p := range pacticipants {
-		p = url.QueryEscape(p)
+		p = strings.Replace(p, " ", "%20", -1)
 		resp, err := b.do("DELETE", fmt.Sprintf("/pacticipants/%s", p), nil)
 		if err != nil {
 			return fmt.Errorf("could not delete pacticipant: %w", err)
