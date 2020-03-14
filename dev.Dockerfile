@@ -8,4 +8,4 @@ RUN apk update && apk add git make
 
 RUN go get github.com/cespare/reflex
 
-ENTRYPOINT /go/bin/reflex -s -r '\.go$' -- go test $(go list ./...)
+ENTRYPOINT /go/bin/reflex -s -r '\.go$' -- make test
