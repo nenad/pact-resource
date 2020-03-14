@@ -4,7 +4,7 @@ COPY . /resource
 WORKDIR /resource
 
 ENV CGO_ENABLED 0
-RUN apk update && apk add git
+RUN apk update && apk add git make
 
 RUN go get github.com/cespare/reflex
 

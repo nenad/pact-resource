@@ -1,15 +1,16 @@
 FROM golang:alpine as builder
 
+RUN apk update && apk add make
+
 COPY . /resource
 WORKDIR /resource
 
 ENV CGO_ENABLED 0
-RUN go build -o /assets/check ./check
-RUN go build -o /assets/in ./in
+RUN make build
 
 FROM alpine:edge AS resource
 RUN apk add --no-cache bash tzdata ca-certificates unzip zip gzip tar
-COPY --from=builder /assets/ /opt/resource/
+COPY --from=builder /resource/bin/ /opt/resource/
 RUN chmod +x /opt/resource/*
 
 # Test binaries exist
