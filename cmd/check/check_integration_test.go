@@ -23,7 +23,7 @@ func TestIntegration_CheckReturnsOutputSuccessfully(t *testing.T) {
 	if err := tb.Reset(); err != nil {
 		t.Fatalf("could not reset the broker: %s", err)
 	}
-	if err := tb.CreatePact("PROVIDER", "CONSUMER", "VERSION"); err != nil {
+	if err := tb.CreatePact("CheckProvider", "CheckConsumer", "CheckVersion"); err != nil {
 		t.Fatalf("could not create a pact: %s", err)
 	}
 
@@ -44,8 +44,8 @@ func TestIntegration_CheckReturnsOutputSuccessfully(t *testing.T) {
 	req := concourse.CheckRequest{
 		Source: concourse.Source{
 			BrokerURL: url,
-			Provider:  "PROVIDER",
-			Consumers: []string{"CONSUMER"},
+			Provider:  "CheckProvider",
+			Consumers: []string{"CheckConsumer"},
 		},
 	}
 
@@ -58,9 +58,9 @@ func TestIntegration_CheckReturnsOutputSuccessfully(t *testing.T) {
 	}
 
 	want := []concourse.Version{{
-		Consumer:  "CONSUMER",
+		Consumer:  "CheckConsumer",
 		UpdatedAt: time.Now().Round(time.Hour).UTC(),
-		Version:   "VERSION",
+		Version:   "CheckVersion",
 	}}
 
 	var got []concourse.Version
