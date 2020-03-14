@@ -7,6 +7,7 @@ import (
 	"io"
 	"math/rand"
 	"net/http"
+	"net/url"
 	"sync"
 	"time"
 )
@@ -36,6 +37,7 @@ func (b *Broker) Reset() error {
 	}
 
 	for _, p := range pacticipants {
+		p = url.QueryEscape(p)
 		resp, err := b.do("DELETE", fmt.Sprintf("/pacticipants/%s", p), nil)
 		if err != nil {
 			return fmt.Errorf("could not delete pacticipant: %w", err)
@@ -97,8 +99,6 @@ func (b *Broker) CreatePact(provider, consumer, version string) error {
 }
 
 func (b *Broker) do(method string, path string, body io.Reader) (*http.Response, error) {
-	mu.Lock()
-	defer mu.Unlock()
 	r, err := http.NewRequest(method, fmt.Sprintf("%s%s", b.URL, path), body)
 	if err != nil {
 		return nil, err
