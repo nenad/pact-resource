@@ -13,7 +13,7 @@ build:
 test: test-short test-integration
 
 test-integration:
-	$(GOTEST) -parallel 1 -run Integration $$(go list ./...)
+	$(GOTEST) -v -parallel 1 -run Integration $$(go list ./...)
 
 test-short:
-	$(GOTEST) -short $$(go list ./...)
+	$(GOTEST) -v -short $$(go list ./...)
